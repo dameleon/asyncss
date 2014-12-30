@@ -79,8 +79,6 @@
                 type: 'set'
             };
 
-            for (key in props) {
-            }
             if (typeof props === 'string') {
                 queue.props = {};
                 queue.props[props] = value;
@@ -130,6 +128,12 @@
                     elementList.splice(index, 1);
                 }
             });
+        },
+        replaceElementList: function(elements) {
+            if (!Asyncss.isLikeElementList(elements)) {
+                throw new TypeError('Argument 1 must be like NodeList type object');
+            }
+            this.elementList = elements;
         }
     };
 

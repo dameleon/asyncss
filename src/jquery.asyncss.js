@@ -1,16 +1,23 @@
 ;(function(global, undefined) {
     var $ = global.jQuery || global.Zepto || global.$;
+    var IDENT = '__ASYNCSS_INSTANCE__';
 
-    $ && $.fn && ($.fn.asyncss = function (first, second) {
-        var asyncss = new global.Asyncss(this);
+    function asyncss() {
+        var instance = this.data(IDENT);
 
-        if (typeof second === 'function') {
-            asyncss.getStyle(first, second);
+        if (!instance) {
+            instance = new global.Asyncss();
+            this.data(IDENT, instance);
         }
-        else {
-            asyncss.setStyle(first, second);
+        instance.replaceElementList(this);
+        if (typeof second === 'function') {
+            instance.getStyle(first, second);
+        } else {
+            instance.setStyle(first, second);
         }
         return this;
-    });
+    }
+
+    $ && $.fn && ($.fn.asyncss = asyncss);
 
 })(window || global, void 0);
