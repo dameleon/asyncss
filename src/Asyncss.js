@@ -7,7 +7,7 @@
             return global.setTimeout(callback, Asyncss.fallbackFrameTime);
         };
 
-    function Asyncss() {
+    function Asyncss(elements) {
         var that = this;
 
         this.isTicking = false;
@@ -30,7 +30,7 @@
     }
 
     // 30 fps
-    Asyncss.fallbackFrameTime = 30 / 1000;
+    Asyncss.fallbackFrameTime = 1000 / 30;
     Asyncss.isElement = function(target) {
         return target instanceof HTMLElement;
     };
@@ -52,25 +52,25 @@
         },
         _setStyle: function(queue) {
             var elementList = this.elementList;
-            var elmLength = elementList.length;
+            var i = elementList.length;
             var props = queue.props;
             var keys = Object.keys(props);
             var keysLength = keys.length;
-            var style, key;
+            var j, style, key;
 
-            while (0 < elmLength) {
-                elmLength--;
-                style = elementList[elmLength].style;
-
-                while (0 < keysLength) {
-                    keysLength--;
-                    key = keys[keysLength];
+            while (0 < i) {
+                i--;
+                j = keysLength;
+                style = elementList[i].style;
+                while (0 < j) {
+                    j--;
+                    key = keys[j];
                     style[key] = props[key];
                 }
             }
         },
         _getStyle: function(queue) {
-            var style = global.getComputedStyle(this.elementList[0])[key];
+            var style = global.getComputedStyle(this.elementList[0]);
 
             queue.callback(style[queue.key]);
         },
@@ -95,7 +95,7 @@
             });
         },
         addQueue: function(queue) {
-            this.queueList(queue);
+            this.queueList.push(queue);
             if (!this.isTicking) {
                 this.isTicking = true;
                 requestAnimationFrame(this.ticker);
@@ -106,7 +106,8 @@
                 this.elementList.push(elements);
             }
             else if (Asyncss.isLikeElementList(elements)) {
-                this.elementList.push.apply(this.elementList, elements);
+                this.elementList.push.apply(this.elementList,
+                    global.Array.prototype.slice.call(elements));
             }
         },
         removeElement: function(elements) {
